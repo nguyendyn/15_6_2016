@@ -1,0 +1,225 @@
+﻿@using PM_ASVN.Models
+@model IEnumerable<TestCaseModel>
+@{
+    ViewBag.Title = "Statistics";
+}
+@if (Session["Breadcrumb"] != null)
+{
+    <ol class="breadcrumb">
+        <li><a href="#"><span class="" style="font-size:13px; color:#154396"><i class="icon-folder font-blue"></i> @Session["Breadcrumb"]</span></a></li>
+    </ol>
+}
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN SAMPLE TABLE PORTLET-->
+        <div class="portlet light ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-folder font-blue"></i>
+                    <span class="caption-subject font-blue bold uppercase">TestCase Statistics</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="table-scrollable">
+                    <table id="tableStatistics" class="table table-striped table-bordered table-hover tbl-estimate">
+                        <thead>
+                            <tr>
+                                <th id="feature">Feature</th>
+                                @if (ViewData["lstType"] != null)
+                                {
+                                    foreach (var item in ViewData["lstType"] as IEnumerable<PM_ASVN.Common.Item>)
+                                    {
+                                        <th data-typetest="@item.ID" style="width: 3%">@item.Name</th>
+                                    }
+                                }
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(Model != null)
+                            { 
+                                foreach (var item in Model)
+                                {
+                                    <tr data-feature="@item.ID">
+                                        <td>@item.Feature</td>
+                                        @foreach (var total in item.TotalType)
+                                        {
+                                            <td data-typetest="@total.ID" style="text-align: right; padding-right: 2px"><a class="testcase-statistic">@total.TotalTC</a></td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- END SAMPLE TABLE PORTLET-->
+    </div>
+</div>
+<div class="modal fade bs-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"></span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Detail</h4>
+            </div>
+            <div class="modal-body">
+                <div class="span8">
+                    <a id="idfeatureselected" hidden></a>
+                    <a id="idtypetestselected" hidden></a>
+                </div>
+                <div class="span8 selectUsers">
+                    <div style="float: right; padding-bottom: 20px">
+                        <b>Users:</b> <select class="lstUsers" id="lstUsers" multiple="multiple"></select><a style="margin-left:10px" class="btn blue filter">Filter</a>
+                    </div>
+                </div>
+                <div class="span8 tableFilter">
+                    <table id="tableUsers" class="table table-striped table-bordered table-hover tbl-estimate">
+                        <thead style="color: #000000;">
+
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on('click', '#tableStatistics tr td', function () {
+        var row = $(this).closest("tr");
+        var idFeature = row.data("feature");
+        var idTypeTest = $(this).data("typetest");
+        $.ajax({
+            url: '@Url.Action("GetUserAndBrowserInTestCase", "Item")',
+            data: {
+                IDFeature: idFeature,
+                IDTypeTest: idTypeTest
+            },
+            type: "POST",
+            success: function (data) {
+                $("#idfeatureselected").html(data.IDFeature);
+                $("#idtypetestselected").html(data.IDTypeTest);
+
+                var $users = "";
+                $(data.lstUsers).each(function (key, value) {
+
+                    $users += " <option value='" + value.ID + "'>" + value.Name + "</option>";
+                })
+                $("#lstUsers").empty();
+                $("#lstUsers").append($users);
+
+                $(function () {
+                    $('#lstUsers').multiselect({
+                        includeSelectAllOption: true
+                    });
+                });
+
+                $(".tableFilter").empty();
+                var $table = "<table class='table table-striped table-bordered table-hover tbl-estimate'>";
+
+                var $thead = "<tr><th>TestCase</th>";
+                $(data.lstBrowsers).each(function (key, value) {
+
+                    $thead += "<th width='15%' style='text-align:center'>" + value.Name + "</th>";
+                })
+                $thead += "</tr>";
+                $table += $thead;
+                $(data.lstResult).each(function (key, value) {
+                    $table += "<tr>";
+                    $table += "<td>" + value.Name + "</td>";
+                    $.each(value.Users, function (key, value) {
+                        $table += "<td style='text-align:center'>" + value + "</td>";
+                    })
+                    $table += "</tr>";
+                })
+                $(".tableFilter").append($table);
+                $('#myModal').modal('show');
+
+
+            },
+        });
+    });
+    $(document).on('click', '.filter', function () {
+        var lstUser = [];
+        $.each($("#lstUsers option:selected"), function () {
+            lstUser.push($(this).val());
+        });
+        $.ajax({
+            url: "/Item/GetTestCaseAndBrowserByUser",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                "lstUsers": lstUser,
+                "IDFeature": $("#idfeatureselected").html(),
+                "IDTypeTest": $("#idtypetestselected").html(),
+            }),
+            success: function (data) {
+                
+                $(".tableFilter").empty();
+                if (data.lstResult.length == 0)
+                {
+                    var warning = "<p style='padding-top: 30px'><b>No record</b></p>";
+                    $(".tableFilter").append(warning);
+                }
+                $(".selectUsers").empty();
+
+                var $users = "";
+                $(data.lstUsers).each(function (key, value) {
+                    $users += " <option value='" + value.ID + "'>" + value.Name + "</option>";
+                })
+               
+                
+                var div = "<div style='float: right; padding-bottom: 20px'>\
+                        <b>Users:</b> <select class='lstUsers' id='lstUsers' multiple='multiple'></select><a style='margin-left:10px' class='btn blue filter'>Filter</a>\
+                    </div>";
+
+                $(".selectUsers").append(div);
+                $("#lstUsers").append($users);
+                $(function () {
+                    $('#lstUsers').multiselect({
+                        includeSelectAllOption: true
+                    });
+                });
+
+
+                $(data.lstResult).each(function (key, value) {
+                    var $table = "<table class='table table-striped table-bordered table-hover tbl-estimate'>";
+                    $table += "<thead>";
+                    $table += "<th>Feature</th>"
+                    $(data.lstBrowsers).each(function (key, value) {
+
+                        $table += "<th width='15%' style='text-align:center'>" + value.Name + "</th>";
+                    })
+                    $table += "</thead><tbody>";
+                    $.each(value.TestCaseModel, function (key, value) {
+                        $table += "<tr>";
+                        $table += "<td>" + value.Name + "</td>";
+                        $.each(value.Users, function (key, value) {
+                            $table += "<td style='text-align:center'>" + value + "</td>";
+                        })
+                        $table += "</tr>";
+                    });
+                    $table += "</tbody>";
+                    $(".tableFilter").append($table);
+                })
+            }
+        });
+    });
+</script>
+<script src="~/Scripts/bootstrap-multiselect.js"></script>
+<style>
+    ul.multiselect-container.dropdown-menu li a {
+        font-size: 11px;
+    }
+
+    ul.multiselect-container.dropdown-menu {
+        padding: 2px 4px;
+    }
+</style>

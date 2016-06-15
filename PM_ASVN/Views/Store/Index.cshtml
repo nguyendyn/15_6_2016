@@ -1,0 +1,30 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    ViewBag.Title = "Index";
+    bool fullSite = Request["iframe"] == null;
+    if (!fullSite) { Layout = "~/Views/Shared/_ModelLayout.cshtml"; };
+}
+@(fullSite?Html.Action("ManageItem", "Item", new { model = Model }):null)
+
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN SAMPLE TABLE PORTLET-->
+        <div class="portlet light ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-folder font-blue"></i>
+                    <span class="caption-subject font-blue bold uppercase">List Feature</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                @if (Model.Data.ID > 0)
+                {
+                    @Html.Action("ParentList", "Item", new { model = new ListItemModel () { ChildId = Model.Data.ID, Type = Types.Feature } })
+                }
+            </div>
+        </div>
+        <!-- END SAMPLE TABLE PORTLET-->
+    </div>
+</div>

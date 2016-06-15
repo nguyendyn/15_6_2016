@@ -1,0 +1,36 @@
+﻿@using PM_ASVN.Models
+@using PM_ASVN.Common
+@{
+    var session = (AccountModel)Session[SessionAccount.ACCOUNT_SESSION];
+}
+@if (session != null)
+{
+    if (session.Name.Equals("Admin"))
+    {
+        <li class="menu-dropdown classic-menu-dropdown">
+            <a href="/System/Index"><i class="icon-settings"></i> System<span class="arrow"></span></a>
+        </li>
+        <li class="menu-dropdown classic-menu-dropdown">
+            <a href="/Account/Index"><i class="icon-user"></i> Account<span class="arrow"></span></a>
+        </li>
+        <li class="menu-dropdown classic-menu-dropdown">
+            <a href="/Role/Index"><i class="icon-lock"></i> Role<span class="arrow"></span></a>
+        </li>
+        <li class="menu-dropdown classic-menu-dropdown">
+            <a href="/Permission/Index"><i class="icon-lock"></i> Permission<span class="arrow"></span></a>
+        </li>
+    }
+    else if (session.Name.Equals("PM"))
+    {
+        <li class="menu-dropdown classic-menu-dropdown">
+            <a href="/System/Index"><i class="icon-settings"></i> System<span class="arrow"></span></a>
+        </li>
+        <li class="menu-dropdown classic-menu-dropdown">
+            <a href="/Account/Index"><i class="icon-user"></i> Account<span class="arrow"></span></a>
+        </li>
+    }
+}
+
+
+
+

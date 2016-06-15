@@ -1,0 +1,9 @@
+﻿@model ItemModel
+@using PM_ASVN.Models;
+@{
+    ViewBag.Title = "Index";
+}
+@if(Request["Data.ID"] != null)
+{
+    @Html.Action("EstimationDetail", "Item", new { model = new EstimationModel() { ID = Convert.ToInt32(Request["Data.ID"]) } })
+}

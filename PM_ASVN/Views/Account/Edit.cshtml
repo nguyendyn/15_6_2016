@@ -1,0 +1,158 @@
+﻿@using PM_ASVN.Models
+@model AccountModel
+@{
+    ViewBag.Title = "Edit";
+}
+@Html.Partial("_Modal")
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN SAMPLE TABLE PORTLET-->
+        <div class="portlet light ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-folder font-blue"></i>
+                    <span class="caption-subject font-blue bold uppercase">Edit Account</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="portlet-body form">
+                    <!-- BEGIN FORM-->
+                    <div class="form-body">
+                        @Html.HiddenFor(m => m.ID)
+                        @using (Html.BeginForm("EditAccount", "Account", new { IDAccount = Model.ID, Username = Model.Username }, FormMethod.Post))
+                        {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">User Name</label>
+                                        <div class="col-md-9">
+                                            @Html.TextBoxFor(m => m.Username, new { @class = "form-control", @required = "required" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--/span-->
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Role</label>
+                                        <div class="col-md-9">
+                                            @Html.DropDownList("IDRole", null, htmlAttributes: new { @class = "form-control", @id = "IdDrop" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="form-actions">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="col-md-3">
+
+                                        </div>
+                                        <div class="col-md-9">
+                                            <input style="padding: 6px 20px; margin-left: 0px;" type="submit" class="btn blue" id="save" name="Action" value="Save">
+                                            <input type="submit" id="remove" class="btn red remove" name="Action" value="Remove">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <!-- END FORM-->
+                </div>
+            </div>
+        </div>
+        <!-- END SAMPLE TABLE PORTLET-->
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN SAMPLE TABLE PORTLET-->
+        <div class="portlet light ">
+            <div class="portlet-body">
+                <div class="tabbable-custom ">
+                    <ul class="nav nav-tabs" id="nav-tabs">
+                        <li id="permisson">
+                            <a href="#" style="color: red"> List Permission</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active">
+                            <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="dataTables_length" id="sample_1_length">
+                                            <!--Code-->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div id="sample_1_filter" class="dataTables_filter">
+                                            <a class="btn btn-outline blue btn-modal" href="@Url.Action("ChildListPermissionInRole", "Item", new { IDRole = Session["IDRole"] })" style="float:right">+ Add More Permission</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                @Html.Action("PermissionInRole", "Item", new { IDRole = Session["IDRole"] })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END SAMPLE TABLE PORTLET-->
+    </div>
+</div>
+<script>
+    var IDRole = $('#IdDrop').val();
+    var IDAccount = '@Model.ID';
+    $('#save').click(function () {
+        $.ajax({
+            url: '/Account/EditAccount',
+            type: 'POST',
+            data: { IDRole: IDRole },
+            success: function () {
+            }
+        })
+    });
+    $('#remove').click(function () {
+        var question = confirm("Do you really want to delete ?");
+        if (question == false) {
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '/Account/DeleteAccount',
+                type: 'POST',
+                data: { IDAccount: IDAccount },
+                success: function () {
+                }
+            })
+        }
+
+    });
+    $(document).on("click", ".btn-modal", function () {
+        var $modal = $('#myModal');
+        var $modalDialog = $('.modal-dialog');
+        var href = $(this).prop('href');
+        var option = { backdrop: 'static' };
+        $modalDialog.load(href, function () {
+            $modal.modal(option, 'show');
+        });
+        return false;
+    });
+    $(function () {
+        $("#nav-tabs > li").each(function () {
+            var type = location.search.split("tab=")[1];
+            if (type == null) {
+                $("#nav-tabs li:first-child").addClass("active");
+            }
+            else {
+                var type2 = type.split("&")[0];
+                var id = $(this).attr("id");
+                if (id == type2) {
+                    $(this).addClass('active');
+                }
+            }
+        });
+    });
+</script>

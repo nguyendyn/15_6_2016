@@ -1,0 +1,36 @@
+﻿@model Permission
+@using PM_ASVN.Common;
+@{
+    ViewBag.Title = "Permission";
+}
+@Html.Partial("_Modal")
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-folder font-blue"></i>
+                    <span class="caption-subject font-blue bold uppercase">List Permission</span>
+                </div>
+                <div class="actions">
+                    <a class="btn blue btn-modal" href="@Url.Action("Add", "Permission")">+ New Permission</a>
+                </div>
+            </div>
+            <div class="portlet-body">
+                @Html.Action("List", "Permission", new { model = Model })
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).on("click", ".btn-modal", function () {
+        var $modal = $('#myModal');
+        var $modalDialog = $('.modal-dialog');
+        var href = $(this).prop('href');
+        var option = { backdrop: 'static' };
+        $modalDialog.load(href, function () {
+            $modal.modal(option, 'show');
+        });
+        return false;
+    });
+</script>

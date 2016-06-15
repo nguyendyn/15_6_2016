@@ -1,0 +1,29 @@
+﻿@model List<Role>
+@using PM_ASVN.Common;
+@{
+    ViewBag.Title = "List";
+    Layout = null;
+}
+<div class="panel-group" id="accordion">
+    @foreach (var item in Model)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse_@item.ID">
+                        @item.Name
+                    </a>
+                    <a class="btn btn-circle btn-modal yellow-crusta pull-right" href="@Html.Raw("/Role/Edit?IDRole=" + item.ID)">Edit</a>
+                </h4>
+            </div>
+            <div id="collapse_@item.ID" class="panel-collapse collapse">
+                <div class="panel-body">
+                    @Html.Action("PermissionInRole", "Item", new { IDRole = item.ID })
+                    <div class="pull-right btn-group">
+                        <a href='@Url.Action("ChildListPermissionInRole", "Item", new { IDRole = item.ID })' class=" btn  btn-outline blue btn-modal"><i class="glyphicon glyphicon-plus"> Add Permissions</i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

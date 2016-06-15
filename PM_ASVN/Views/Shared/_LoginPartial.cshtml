@@ -1,0 +1,14 @@
+﻿@using PM_ASVN.Models
+@using PM_ASVN.Common
+@{
+    var session = (AccountModel)Session[SessionAccount.ACCOUNT_SESSION];
+}
+@if (session != null)
+{
+	<li class="menu-dropdown classic-menu-dropdown">
+        <a href="#"> @session.Username<span class="arrow"></span></a>
+    </li>
+    <li class="menu-dropdown classic-menu-dropdown">
+        <a href="@Url.Action("Logout","Login")"> [Logout]<span class="arrow"></span></a>
+    </li>
+}

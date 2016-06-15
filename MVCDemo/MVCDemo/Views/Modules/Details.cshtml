@@ -1,0 +1,73 @@
+﻿@model IEnumerable<MVCDemo.Models.Feature>
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Html.Partial("_Modal")
+<div id="content">
+    <div class="text-center">
+        <h3>List of Feature in Module : @Session["ModuleName"]</h3>
+    </div>
+    
+    <div class="form-inline">
+        <div id="action">
+            <a href='@Url.Action("AddFeature", "Features", new { id = @Session["ID"], name = @Session["ModuleName"] })' class=" btn btn-info btn-modal"><i class="glyphicon glyphicon-plus"></i></a>
+            <a href='@Url.Action("FeatureModule", "Features", new { id = @Session["ID"], name = @Session["ModuleName"] })' class=" btn btn-danger btn-modal"><i class="glyphicon glyphicon-pencil"></i></a>
+        </div>
+    </div>
+    <table class="table table-bordered text-center">
+        <tr>
+            <th>
+                <div class="text-center">
+                    ID
+                </div>
+            </th>
+           <th>
+                <div class="text-center">
+                    Feature Name
+                </div>
+            </th>
+            <th>
+                <div class="text-center">
+                    Feature Description
+                </div>
+            </th>
+        </tr>
+        @{if (Model.Count() == 0)
+           {
+            <tr>
+                
+                <td style="color:red;border-color:white" colspan="3" >
+                    <h4>Records not found </h4>
+                </td>
+               
+             </tr>
+           }
+           else
+           {
+            foreach (var item in Model)
+            {
+            <tr>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td class="text-left">
+                    @Html.DisplayFor(modelItem => item.FeatureName)
+                </td>
+                <td class="text-left">
+                    @Html.DisplayFor(modelItem => item.FeatureDescription)
+                </td>
+            </tr>
+            }
+          }
+        }
+    </table>
+    <div id="contentPage">
+     @Html.Partial("_PagingDetailModule")
+    </div>
+    <p>
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+    @Html.Partial("_Footer")
+</div>

@@ -1,0 +1,7 @@
+﻿@using PM_ASVN.Models
+@model ListItemModel
+@{
+    ViewBag.Title = "Index";
+}
+<a style="margin-top: 20px" class="btn btn-primary" href="/Table/">+ Add New Table</a>
+@Html.Action("ChildList", "Item", new { model = Model })

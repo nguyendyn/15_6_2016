@@ -1,0 +1,71 @@
+﻿@model IEnumerable<MVCDemo.Models.Module>
+
+@{
+    ViewBag.Title = "Modules List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+ }
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+
+@Html.Partial("_Modal")
+
+<div id="content">
+    <div class="text-center">
+        <h2>Module List </h2>
+    </div>
+    <div id="create">
+        <a href='@Url.Action("Create")' class=" btn btn-info btn-modal"><i class="glyphicon glyphicon-plus"></i></a>
+    </div>
+   
+    <table class="table table-bordered table-hover text-center">
+        <tr>
+            <th>
+                <div class="text-center">
+                    ID
+                </div>
+            </th>
+            <th>
+                <div class="text-center">
+                    Module Name
+                </div>
+            </th>
+            <th>
+                <div class="text-center">
+                    List Feature
+                </div>
+            </th>
+
+            <th>
+                <div class="text-center">
+                    Action
+                </div>
+            </th>
+        </tr>
+        
+        @foreach (var item in Model)
+        {
+               <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.ModuleName)
+                </td>
+                <td>
+                    @Html.ActionLink("Feature", "Details", new { id = item.ID, name = item.ModuleName })
+                </td>
+                <td>
+                    <a href='@Url.Action("Edit", new { id=item.ID})'class="btn btn-primary btn-modal"><i class="glyphicon glyphicon-pencil"></i></a>              
+                    <a href='@Url.Action("Delete", new { id = item.ID })' class=" btn btn-danger btn-modal"><i class="glyphicon glyphicon-trash"></i></a>
+               </td>
+            </tr>
+        }
+    </table>
+    <div id="contentPage">
+      @Html.Partial("_PagingIndex")
+    </div>
+    @Html.Partial("_Footer")
+</div> 
+    
+    
+
+

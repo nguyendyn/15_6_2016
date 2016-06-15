@@ -1,0 +1,53 @@
+﻿@model MVCDemo.Models.Module
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+@using (Html.BeginForm("Create", "Modules", FormMethod.Post, htmlAttributes: new { @class = "form-add" }))
+{
+   
+    @Html.AntiForgeryToken()
+    <div class="modal-content">
+        <div class="modal-header" id="add">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Add Module</h4>
+        </div>
+        <div class="form-horizontal">
+            <div class="modal-body">
+              
+                <div class="form-group">
+                    @Html.Label("Module Name", htmlAttributes: new { @class = "control-label col-md-4 " })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.ModuleName, new { htmlAttributes = new { @class = "form-control ", @placeholder="Enter Module Name" } })
+        
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("Module Description", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.ModuleDescription, new { htmlAttributes = new { @class = "form-control", @placeholder="Enter Module Description" } })
+                    </div>
+                </div>
+            </div><!--div modal body-->
+            <div class="modal-footer">
+                <div class="form-group">
+                        <div class="col-md-10 text-left">
+                            @Html.ValidationMessageFor(model => model.ModuleName, "", new { @class = "text-danger" })<br />
+                            @Html.ValidationMessageFor(model => model.ModuleDescription, "", new { @class = "text-danger" })
+                        </div>            
+                       <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div><!--div modal footer-->
+        </div>
+    </div><!--div modal content-->
+   
+}
+
+
+
+
+
+
+

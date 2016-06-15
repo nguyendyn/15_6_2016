@@ -1,0 +1,245 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    ViewBag.Title = "Home Page";
+    Layout = null;
+}
+@if (ViewBag.Breadcrumb != null)
+{
+    <ol class="breadcrumb">
+        <li><a href="#"><span class="" style="font-size:13px; color:#154396"><i class="icon-folder font-blue"></i> @ViewBag.Breadcrumb</span></a></li>
+    </ol>
+}
+@{
+    var itemType = Enum.GetName (typeof (Types), Model.Data.Type);
+    int size = 12;
+    int sizebox = 6;
+}
+@if (Model.Data.Type == (int)Types.TestCase)
+{
+    size = 8;
+    sizebox = 12;
+}
+@if (Model.Data.Type == (int)Types.Project | Model.Data.Type == (int)Types.Task)
+{
+    size = 8;
+    sizebox = 12;
+}
+@if ((Model.Data.Type == (int)Types.Project && Model.Data.ID == 0) | (Model.Data.Type == (int)Types.TestCase && Model.Data.ID == 0) | (Model.Data.Type == (int)Types.Task && Model.Data.ID == 0))
+{
+    size = 12;
+    sizebox = 12;
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-folder font-blue"></i>
+                    @if (Model.Data.ID > 0)
+                    {
+                        <span class="caption-subject font-blue bold uppercase">Edit @itemType</span>
+                    }
+                    else
+                    {
+                        <span class="caption-subject font-blue bold uppercase">Add New @itemType</span>
+                    }
+
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="portlet-body form">
+                    <!-- BEGIN FORM-->
+                    <div class="form-body">
+                        @using (Html.BeginForm ((string)null, (string)null, FormMethod.Post, new { @class = "form-horizontal" }))
+                        {
+                            @Html.HiddenFor(m => m.Data.ID)
+                            @Html.HiddenFor(m => m.Data.Type)
+                            @Html.HiddenFor(m => m.ReturnUrl)
+                            @Html.HiddenFor(m => m.ParentId)
+                            <div class="row">
+                                <div class="col-md-@sizebox">
+                                     <div class="form-group form-style-4">
+                                                <label class="col-md-1 control-label">Name</label>
+                                                <div class="col-md-11">
+                                                    @if (Model.Data.ID > 0)
+                                                    {
+                                                        if (Model.Data.Type == (int)Types.Project)
+                                                        { 
+                                                            @Html.TextBoxFor(m => m.Data.Name, new { @class = "form-control", @required = "required", Style="margin-left: 8px;" })
+                                                           
+                                                        }
+                                                        else
+                                                        {
+                                                             @Html.TextBoxFor(m => m.Data.Name, new { @class = "form-control", @required = "required" })
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.TextBoxFor(m => m.Data.Name, new { @class = "form-control", @id = "newname", @required = "required" })
+                                                        @Html.HiddenFor(m => m.Data.ID, new { @id = "newid" })
+                                                        @Html.HiddenFor(m => m.Data.Type, new { @id = "newtype" })
+                                                        @Html.HiddenFor(m => m.ParentId, new { @id = "newparentid" })
+                                                    }
+                                                </div>
+                                   </div>                                       
+                                   
+                                </div>
+                                @if (Model.Data.Type != (int)Types.TestCase)
+                                {
+                                    <div class="col-md-@sizebox">
+                                        <div class="form-group form-style-4">
+                                            <label class="col-md-1 control-label">Des</label>
+                                            <div class="col-md-11">
+                                                @if (Model.Data.ID > 0)
+                                                {
+                                                    if (Model.Data.Type == (int)Types.Project)
+                                                    {
+                                                        @Html.TextAreaFor(m => m.Data.Description, new { @class = "form-control area", @required = "required", Style="margin-left: 8px;" })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.TextAreaFor(m => m.Data.Description, new { @class = "form-control area", @required = "required" })
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @Html.TextAreaFor(m => m.Data.Description, new { @class = "form-control area", @id = "newdescription", @required = "required" })
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                }
+                                
+                            </div>
+                            if (Model.Data.Type == (int)Types.Project)
+                            {
+                                @Html.Action("ManageProject", new { model = Model })
+                            }
+                            if (Model.Data.Type == (int)Types.TestCase)
+                            {
+                                @Html.Action("ManageTestCase", new { model = Model })
+                            }
+                            if (Model.Data.Type == (int)Types.Task)
+                            {
+                                @Html.Action("ManageTask", new { model = Model })
+                            }
+                            <div class="form-actions">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-12" style="text-align: right;">
+                                            @if (Model.Data.ID > 0)
+                                            {
+                                                <input style="padding: 6px 20px; margin-left: -7px;" data-action="save" type="submit" class="btn blue" name="Action" value="Save">
+                                                <input data-action="remove" type="submit" class="btn red remove" name="Action" value="Remove">
+                                                <text>
+                                                    <script>
+                                                        $(document).on('click', '.remove', function () {
+                                                            var action = $(this).data("action");
+                                                            if (action == "remove") {
+                                                                var question = confirm("Do you really want to delete ?");
+                                                                if (question == false) {
+                                                                    return false;
+                                                                }
+                                                                else {
+                                                                    return true;
+                                                                }
+                                                            }
+                                                        });
+                                                    </script>
+                                                </text>
+                                            }
+                                            @if ((Model.Data.ID == 0 && Model.Data.Type == (int)Types.Project) | (Model.Data.ID == 0 && Model.Data.Type == (int)Types.Database) | (Model.Data.ID == 0 && Model.Data.Type == (int)Types.TestCase))
+                                            {
+                                                <input style="padding: 6px 20px; margin-left: -7px;" data-action="save" type="submit" class="btn blue" name="Action" value="Save">
+                                            }
+                                            @if (Model.Data.ID == 0 && Model.Data.Type != (int)Types.Project && Model.Data.Type != (int)Types.Database && Model.Data.Type != (int)Types.TestCase)
+                                            {
+                                                <input style="margin-left: -7px;" data-action="savecontinue" type="submit" class="btn blue continue" name="Action" value="Save & Continue">
+                                                <input data-action="save" type="submit" class="btn btn-outline blue" name="Action" value="Save">
+
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <!-- END FORM-->
+                </div>
+            </div>
+        </div>
+        <!-- END SAMPLE TABLE PORTLET-->
+    </div>
+    @if ((Model.Data.Type == (int)Types.Project && Model.Data.ID > 0) | (Model.Data.Type == (int)Types.Task && Model.Data.ID > 0))
+    {
+        @Html.Action("ManageComment", new { model = Model })
+        @Html.Action("ManageFile", new { model = Model })
+        
+    }
+    
+    @if (Model.Data.Type == (int)Types.TestCase && Model.Data.ID > 0)
+    {
+        @Html.Action("ManageComment", new { model = Model })
+        @Html.Action("ManageFile", new { model = Model })
+        @Html.Action("ManageUsersTestCase", new { model = Model })
+            
+    }
+</div>
+
+
+
+<script>
+    $(".continue").click(function () {
+        var action = $(this).data("action");
+        if (action == "savecontinue") {
+            var name = $("#newname").val();
+            var type = $("#newtype").val();
+            var parentID = $("#newparentid").val();
+            if (name == "") {
+                alert("Value cannot be null");
+            }
+            else {
+                jQuery.ajax({
+                    url: '@Url.Action("SaveItemContinue", "Item")',
+                    dataType: 'json',
+                    data: {
+                        ParentId: parentID,
+                        'Data.Type': type,
+                        'Data.Name': name,
+                    },
+                    type: "POST",
+
+                    complete: function (data) {
+                        toastr.options = {
+                            "closeButton": true,
+                            "debug": false,
+                            "positionClass": "toast-top-right",
+                            "onclick": null,
+                            "showDuration": "1000",
+                            "hideDuration": "0",
+                            "timeOut": "2000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        };
+                        toastr.success('', 'Success !!!');
+                        $("#newname").val("");
+
+                    }
+                });
+            }
+
+            return false;
+        }
+
+    });
+
+</script>

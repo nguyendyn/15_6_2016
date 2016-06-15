@@ -1,0 +1,68 @@
+﻿@model PM_ASVN.Models.Project
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-12 title">
+        <h2>Edit Project</h2>
+    </div>
+    <hr>
+    @using (Html.BeginForm("EditProject", "Project", System.Web.Mvc.FormMethod.Post))
+    {
+
+        <div class="form-group">
+            @Html.HiddenFor(m => m.ID)
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label>Project name:</label><span style="color:red;">*</span>
+            </div>
+            <div class="col-md-5">
+                <input type="text" name="projectName" class="form-control"/>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="form-group" style="margin: 30px 0;">
+            <div class="col-md-2">
+                <label>Start Date:</label><span style="color:red;">*</span>
+            </div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.StartDate, new { @class = "form-control input-text" })
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-2">
+                <label>End Date:</label><span style="color:red;">*</span>
+            </div>
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.EndDate, new { @class = "form-control input-text" })
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-12"></div>
+        <div class="form-group" style="margin:30px 0;">
+            <div class="col-md-2">
+                <label>Status:</label><span style="color:red;">*</span>
+            </div>
+            <div class="col-md-10">
+                @Html.TextAreaFor(m => m.Status, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="form-group form-input">
+            <div class="col-md-4"></div>
+            <div class="col-md-4" style="border-top: 1px dashed #eee; max-width: 100%; "></div>
+            <div class="col-md-4"></div>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" name="ButtonAction" value="Edit">
+            <input type="submit" class="btn btn-primary" name="ButtonAction" value="Remove">
+        </div>
+
+    }
+</div>
+
+

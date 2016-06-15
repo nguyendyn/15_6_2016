@@ -1,0 +1,369 @@
+﻿@model IEnumerable<PM_ASVN.Models.EstimationDetail>
+@using PM_ASVN.Models;
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+@if (Session["Breadcrumb"] != null)
+{
+    <ol class="breadcrumb">
+        <li><a href="#"><span class="" style="font-size:13px; color:#154396"><i class="icon-folder font-blue"></i> @Session["Breadcrumb"]</span></a></li>
+    </ol>
+}
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN SAMPLE TABLE PORTLET-->
+        <div class="portlet light ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-folder font-blue"></i>
+                    <span class="caption-subject font-blue bold uppercase">Estimation Detail</span>
+                </div>
+                <div class="actions">
+                    <a href="#" class="btn btn-circle blue btn-outline btn-sm">
+                        <i class="icon-printer"></i> PDF
+                    </a>
+                    <a href="#" class="btn btn-circle blue btn-outline btn-sm">
+                        <i class="icon-printer"></i> Excel
+                    </a>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="table-scrollable">
+                    <table id="tablestimation" class="table table-striped table-bordered table-hover tbl-estimate">
+                        <thead>
+                            <tr>
+                                <th id="feature">Feature<br />&nbsp;</th>
+                                @foreach (var item in ViewData["lstWorkGroup"] as IEnumerable<PM_ASVN.Common.WorkGroup>)
+                                {
+                                    double Percent = Convert.ToDouble(item.PercentGroup) * 100;
+                                    <th data-workgroup="@item.ID">@item.Name<br />@Percent%</th>
+                                }
+                                <th style="width: 2%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 0;
+                                int row = 0;
+                            }
+                            @if(Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    if (index == 0)
+                                    {
+                                        <text>
+                                            <tr id="@row">
+                                                <td id="@item.ID">@item.Feature</td>
+                                                <td><div class="parent-cost"><div class="triangle" id="@item.ID" data-id="@index"></div><div class="cost"><a class="time" id="@item.WorkGroup.ToLower().Replace(" ","")@row">@item.Cost</a></div></div></td>
+                                        </text>
+                                        index++;
+                                    }
+                                    else
+                                    {
+                                        if (index == 3)
+                                        {
+                                            <text>
+                                                <td><div class="parent-cost"><div class="triangle" id="@item.ID" data-id="@index"></div><div class="cost"><span class="timecoding"><a class="time" id="@item.WorkGroup.ToLower().Replace(" ", "")@row">@item.Cost</a></span></div></div></td>
+                                            </text>
+                                        }
+                                        else
+                                        {
+                                            <text>
+                                                <td><div class="parent-cost"><div class="triangle" id="@item.ID" data-id="@index"></div><div class="cost"><a class="time" id="@item.WorkGroup.ToLower().Replace(" ", "")@row">@item.Cost</a></div></div></td>
+                                            </text>
+                                        }
+                                        index++;
+                                    }
+                                    if (index == 8)
+                                    {
+                                        <text>
+                                        <td style="text-align: center">
+                                            <a style="font-size: 10px" class="btn yellow-crusta" id="@row">
+                                                <i class="icon-pencil"></i>
+                                            </a>
+                                         </td>
+                                         </text>
+                                        index = 0;
+                                        row++;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>No feature</td>
+                                </tr>
+                            }
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+        <!-- END SAMPLE TABLE PORTLET-->
+    </div>
+</div>
+@foreach (var item in ViewData["lstWorkGroup"] as IEnumerable<PM_ASVN.Common.WorkGroup>)
+{
+    @Html.HiddenFor(m => item.PercentGroup, new { id = item.Name.Replace(" ","")})
+}
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"></span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Update Time</h4>
+            </div>
+            <div class="modal-body">
+                
+                <div class="span8">
+                    <table id="tableEdit" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th width="10%">Time</th>
+                                <th width="90%">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer" style="margin-top: 0px">
+                <a class="btn blue" data-action="UpdateWorkItem" style="font-size:11px">Save</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var _workGroup = new Array("inputspec", "inputuidesign", "inputtechdes", "inputcoding", "inputtc", "inputtesting", "inputpromotion", "inputpm");
+    $(document).on('click', '.btn-success', function () {
+        $("#tableEdit tbody").empty();
+        var $id = $(this).data("estimation");
+        var $idwg = $(this).data("workgroup");
+        $.ajax({
+            url: '@Url.Action("GetWorkItemInEstimationByWorkGroup", "Item")',
+            data: {
+                IDEstimation: $id,
+                IDWorkGroup: $idwg
+            },
+            type: "POST",
+            success: function (data) {
+                $(data.lstWorkItem).each(function (key, value) {
+                    var $result = "<tr id='" + value.ID + "'>" + "<td><input style='width: 100%;' value='" + value.Cost + "' type='number' /></td>" + "<td>" + value.Name + "</td>" + "</tr>";
+                    $("#tableEdit tbody").append($result);
+                })
+                $("#tableEdit tbody").append("<p id='IDEstimationEdit' hidden>" + $id + "</p>")
+                $('#myModal').modal('show');
+            },
+        });
+    });
+    $(document).on('click', '.yellow-crusta', function () {
+        var id = $(this).attr("id");
+        $('#tablestimation tbody tr').each(function () {
+            var idtr = $(this).attr("id");
+            if (id == idtr) {
+                var index = 0;
+                $(this).find('.time').each(function () {
+                    var object = $(this).attr("id");
+                    var value = $("#" + object).text();
+                    $("#" + object).html("<input id='" + _workGroup[index] + "' data-id='"+ index +"' value='" + value + "' style='width: 100%; background: rgba(255, 255, 0, 0.39); text-align: right' type='number' />");
+                    $("#" + object).removeAttr("id");
+                    index++;
+
+                });
+                $(this).find('.btn').attr('class', 'btn blue');
+                $(this).find('.btn').attr('data-action', 'UpdateWorkGroup');
+                $(this).find('.btn').text('Save');
+            }
+            else{
+                var lasttd = $(this).find('td:last-child').find('a');
+                lasttd.css("visibility", "collapse");
+            }
+        });
+    });
+    $(document).on('click', '.blue', function () {
+        var $action = $(this).data("action");
+        switch ($action) {
+            case "UpdateWorkGroup":
+                {
+                    var id = $(this).attr("id");
+                    var formData = new FormData();
+                    $('#tablestimation tbody tr').each(function () {
+                        var idtr = $(this).attr("id");
+                        if (id == idtr) {
+                            var ides = $(this).find("td:first").attr("id");
+                            formData.append("IDEstimation", ides);
+                            $(this).find('input').each(function () {
+                                var object = $(this).attr("id");
+                                var value = $("#" + object).val();
+
+                                var $index = $(this).data("id") + 2;
+                                var $idwg = $("#tablestimation thead tr th:nth-child(" + $index + ")").data("workgroup");
+
+                                formData.append($idwg, value);
+                            });
+                        }
+                    });
+                    jQuery.ajax({
+                        url: '@Url.Action("UpdateTimeWorkGroup", "Item")',
+                        data: formData,
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            if (data == "OK") {
+                                toastr.options = {
+                                    "closeButton": true,
+                                    "debug": false,
+                                    "positionClass": "toast-top-right",
+                                    "onclick": null,
+                                    "showDuration": "1000",
+                                    "hideDuration": "0",
+                                    "timeOut": "2000",
+                                    "extendedTimeOut": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut"
+                                };
+                                toastr.success('', 'Update Success !!!');
+                                location.reload();
+                            }
+                        },
+                    });
+                } break;
+            case "UpdateWorkItem":
+                {
+                    var formData = new FormData();
+                    var ides = $("#IDEstimationEdit").text();
+                    formData.append("IDEstimate", ides);
+                    $('#tableEdit tbody tr').each(function () {
+                        var idwi = $(this).attr("id");
+                        $(this).find('input').each(function () {
+                            formData.append(idwi, this.value);
+                         });
+                    });
+                    jQuery.ajax({
+                        url: '@Url.Action("UpdateTimeWorkItem", "Item")',
+                        data: formData,
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            if (data == "OK") {
+                                alert("Update Success!");
+                                location.reload();
+                            }
+                        },
+                    });
+                } break;
+        }
+
+
+    });
+    $(document).ready(function () {
+        var pSpec = $("#Spec").val();
+        var pUIDesign = $("#UIDesign").val();
+        var pTechDes = $("#TechDes").val();
+        var pTC = $("#TC").val();
+        var pTesting = $("#Testing").val();
+        var pPromotion = $("#Pro").val();
+        var pPM = $("#PM").val();
+        $('.timecoding').keyup(function () {
+            var coding = $("#inputcoding").val();
+            $("#inputspec").val(coding * pSpec);
+            $("#inputuidesign").val(coding * pUIDesign);
+            $("#inputtechdes").val(coding * pTechDes);
+            $("#inputtc").val(coding * pTC);
+            $("#inputtesting").val(coding * pTesting);
+            $("#inputpromotion").val(coding * pPromotion);
+            $("#inputpm").val(coding * pPM);
+        });
+    });
+    $(document).ready(function () {
+        $('.triangle').each(function () {
+            var $elem = $(this);
+            var $id = $(this).attr("id");
+            var $index = $(this).data("id") + 2;
+            var $idwg = $("#tablestimation thead tr th:nth-child(" + $index + ")").data("workgroup");
+            
+            $.ajax({
+                url: '@Url.Action("GetWorkItemInEstimationByWorkGroup", "Item")',
+                data: {
+                    IDEstimation: $id,
+                    IDWorkGroup: $idwg
+                },
+                type: "POST",
+                success: function (data) {
+                    var realTime = data.realTime;
+                    var timePlan = data.timePlan;
+                    var Description = data.description;
+                    var $Content = "<table id='tableTimePlan' class='table'>\
+                        <tbody>\
+                            <tr>\
+                                <td><b>Expect Time: </b></td>\
+                                <td style='text-align: right; font-size: 10px; padding-right: 2px'><b style='font-size: 10px;'>" + timePlan + "</b></td>\
+                            </tr>\
+                            <tr>\
+                                <td><b>Real Time: </b></td>\
+                                <td id='realTime' style='text-align: right; font-size: 10px; padding-right: 2px'><b style='font-size: 10px;'>" + realTime + " </b></td>\
+                            </tr>\
+                        </tbody>\
+                    </table>";
+                    $Content += "<table  id='tableWorkItem' class='table table-bordered'>\
+                            <thead>\
+                                <tr>\
+			                    	<th>Time</th>\
+			                    	<th>Description</th>\
+			                    </tr>\
+			                </thead>\
+			                <tbody>";
+                    $(data.lstWorkItem).each(function (key, value) {
+                        var $result = "<tr>" + "<td style='text-align:center;font-size: 10px;'><b style='font-size: 10px;'>" + value.Cost + "</b></td>" + "<td>" + value.Name + "</td>" + "</tr>";
+                        $Content += $result;
+                    })
+                    $Content += "</tbody></table><a data-estimation='" + $id + "' data-workgroup='" + $idwg + "' class='btn btn-success' style='float: right; font-size: 10px'>Update Time</a><br/>"
+                    $Content += "<hr/>"
+                    $Content += "<p style='text-align:center; margin: 0px; font-size: 10px'><b>Member's Description</b></p>"
+                    $Content += "<p style='font-size: 10px'>" + Description + "</p>"
+                    if ($idwg == 241 | $idwg == 242 | $idwg == 243) {
+                        $align = "left";
+                    }
+                    else {
+                        $align = "right";
+                    }
+
+                    $elem.popover({
+                        placement: $align,
+                        container: 'body',
+                        trigger: 'manual',
+                        html: true,
+                        animation: true,
+                        title: 'WorkItem Detail',
+                        content: $Content,
+                    }).on("mouseenter", function () {
+                            var _this = this;
+                            $(this).popover("show");
+                            $(".popover").on("mouseleave", function () {
+                                $(_this).popover('hide');
+                            });
+                    }).on("mouseleave", function () {
+                        var _this = this;
+                        setTimeout(function () {
+                            if (!$(".popover:hover").length) {
+                                $(_this).popover("hide");
+                            }
+                        }, 100);
+                    });
+                },
+            });
+        });
+    });
+</script>

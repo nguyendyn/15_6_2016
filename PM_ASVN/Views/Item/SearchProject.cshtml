@@ -1,0 +1,54 @@
+﻿@using PM_ASVN.Common
+@using PM_ASVN.Models
+@model IEnumerable<Item>
+@{
+    ViewBag.Title = "SearchProject";
+}
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN SAMPLE TABLE PORTLET-->
+        <div class="portlet light ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-folder font-blue"></i>
+                    <span class="caption-subject font-blue bold uppercase">Search Results</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                @if(Model != null)
+                {
+                    <div class="table-scrollable">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td width="10%">@item.ID</td>
+                                    <td width="50%">@item.Name</td>
+                                    @{
+                                        var enumValue = Enum.GetName(typeof(Types), item.Type);
+                                      }
+                                    <td style="text-align: right"><a class="btn btn-circle yellow-crusta" href="@Html.Raw("/" + enumValue + "?Data.ID=" + item.ID)"><i class="icon-pencil"></i></a></td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <h6 style="text-align: center"><b>No Records Found</b></h6>
+                }
+        </div>
+        </div>
+        <!-- END SAMPLE TABLE PORTLET-->
+    </div>
+</div>
+

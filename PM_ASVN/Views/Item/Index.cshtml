@@ -1,0 +1,27 @@
+﻿@model IEnumerable<PM_ASVN.Models.Item>
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container">
+    <h2 style="text-align: center">List Item</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.Raw(item.ID)</td>
+                    <td>@Html.Raw(item.Name)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

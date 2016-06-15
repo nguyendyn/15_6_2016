@@ -1,0 +1,7 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    ViewBag.Title = "Index";
+}
+@Html.Action("ManageItem", "Item", new { model = Model })
+

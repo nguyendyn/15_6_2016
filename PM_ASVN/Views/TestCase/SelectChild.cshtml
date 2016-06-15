@@ -1,0 +1,8 @@
+﻿@using PM_ASVN.Models
+@model ListItemModel
+@{
+    ViewBag.Title = "ListChild";
+    Layout = null;
+}
+
+@Html.Action("SelectChild", "Ticket", new { model = Model })

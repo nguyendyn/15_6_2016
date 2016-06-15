@@ -1,0 +1,75 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    Layout = null;
+}
+
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-ui.js"></script>
+
+
+<script>
+    $(function () {
+        $("#datepickerStartDate").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            onClose: function (selectedDate) {
+                $("#datepickerEndDate").datepicker("option", "minDate", selectedDate);
+            }
+        });
+      });
+</script>
+
+<style>
+    .row.form-style-4 .control-label {
+        
+    }
+    .row.form-style-4 .div-select{
+        padding-left: 0px;
+    }
+</style>
+
+@Html.HiddenFor(m => m.ProjectData.ID)
+
+<div class="row form-style-4">    
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Primary BA</label>
+            <div class="col-md-8 div-select">
+                @Html.DropDownListFor(m => m.ProjectData.PrimaryBA, new SelectList ((System.Collections.IEnumerable)ViewData["lstUser"], "ID", "Name"))
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Primary Web</label>
+            <div class="col-md-8 div-select">
+                @Html.DropDownListFor(m => m.ProjectData.PrimaryWeb, new SelectList ((System.Collections.IEnumerable)ViewData["lstUser"], "ID", "Name"))
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Primary DB</label>
+            <div class="col-md-8 div-select">
+                @Html.DropDownListFor(m => m.ProjectData.PrimaryDB, new SelectList ((System.Collections.IEnumerable)ViewData["lstUser"], "ID", "Name"))
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Start Date</label>
+            <div class="col-md-8 div-select">
+                @Html.TextBoxFor(m => m.ProjectData.StartDate, "{0:MM/dd/yyyy}", new { @class = "form-control", @placeholder = "MM/dd/yyyy", @required = "required", @id = "datepickerStartDate" })
+            </div>
+        </div>
+    </div>
+    <!--/span-->
+</div>
+
+
+
+
+
+

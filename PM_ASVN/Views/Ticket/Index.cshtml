@@ -1,0 +1,200 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    ViewBag.Title = "Index";
+}
+
+@Html.Action("ManageItem", "Item", new { model = Model })
+@if (Model.Data.ID > 0)
+{
+    int PageIndex = 1;
+    if (Request.QueryString["pageindex"] != null)
+    {
+        PageIndex = Convert.ToInt32(Request.QueryString["pageindex"].ToString());
+    }
+    var Type = Enum.GetName(typeof(Types), Model.Data.Type);
+    <div class="row">
+        <div class="col-md-12">
+            <!-- BEGIN SAMPLE TABLE PORTLET-->
+            <div class="portlet light ">
+                <div class="portlet-body">
+                    <div class="tabbable-custom ">
+                        <ul class="nav nav-tabs" id="nav-tabs">
+                            <li id="feature">
+                                <a href="@Type?Data.ID=@Model.Data.ID&tab=feature"> List Feature </a>
+                            </li>
+                            <li id="testcase">
+                                <a href="@Type?Data.ID=@Model.Data.ID&tab=testcase"> List TestCase </a>
+                            </li>
+                            <li id="task">
+                                <a href="@Type?Data.ID=@Model.Data.ID&tab=task"> List Task </a>
+                            </li>
+                            <li id="bug">
+                                <a href="@Type?Data.ID=@Model.Data.ID&tab=bug"> List Bug </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            
+                            @if (@Request.QueryString["tab"] == "feature" | @Request.QueryString["tab"] == null)
+                            {
+                                <div class="tab-pane active">
+                                    <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="dataTables_length" id="sample_1_length">
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <div id="sample_1_filter" class="dataTables_filter">
+                                                    <a data-action="add_more" class="btn btn-outline blue" href="Item/SelectChild?type=@Html.Raw((int)Types.Feature)&parentId=@Html.Raw(Model.Data.ID)&FilterParentId=@Session["IDProject"]&iframe=true" style="float:right">+ Add More Feature</a>
+                                                    <a class="btn blue" href="Estimation/Index?Data.ID=@Model.Data.ID" style="float:right; margin-right: 10px"><i class="icon-list"></i> View Estimation</a> 
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @Html.Action("ChildList", "Item", new { model = new ListItemModel() { ParentId = Model.Data.ID, Type = Types.Feature, Edit = false, PageIndex = PageIndex } })
+                                    </div>
+                                </div>
+                            }
+                            @if (@Request.QueryString["tab"] == "testcase")
+                            {
+                                <div class="tab-pane active">
+                                    <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="dataTables_length" id="sample_1_length">
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <div id="sample_1_filter" class="dataTables_filter">
+                                                    <a data-action="add_more" class="btn blue" href="TestCase/SelectChild?type=@Html.Raw((int)Types.TestCase)&parentId=@Html.Raw(Model.Data.ID)&FilterParentId=@Session["IDFeature"]&iframe=true" style="float:right">+ Add More TestCase</a>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @Html.Action("ChildList", "Item", new { model = new ListItemModel() { ParentId = Model.Data.ID, Type = Types.TestCase, Edit = false, PageIndex = PageIndex } })
+                                    </div>
+                                </div>
+                            }
+                            @if (@Request.QueryString["tab"] == "task")
+                            {
+                                <div class="tab-pane active">
+                                    <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="dataTables_length" id="sample_1_length">
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <div id="sample_1_filter" class="dataTables_filter">
+                                                    <a data-action="add_new" class="btn blue" style="float:right">+ New Task</a>
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @Html.Action("ChildList", "Item", new { model = new ListItemModel() { ParentId = Model.Data.ID, Type = Types.Task, Edit = true, PageIndex = PageIndex } })
+                                    </div>
+                                </div>
+                            }
+                            @if (@Request.QueryString["tab"] == "bug")
+                            {
+                                <div class="tab-pane active">
+                                    <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="dataTables_length" id="sample_1_length">
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <div id="sample_1_filter" class="dataTables_filter">
+                                                    <a data-action="add_new" class="btn blue" style="float:right">+ New Bug</a>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @Html.Action("ChildList", "Item", new { model = new ListItemModel() { ParentId = Model.Data.ID, Type = Types.Bug, Edit = true, PageIndex = PageIndex } })
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END SAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+   
+}
+
+<div id="modal_more" class="modal fade bs-modal-lg">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"></span>
+                </button>
+                <h4 class="modal-title">Add More</h4>
+            </div>
+            <div class="modal-body">
+                <iframe frameborder="0" style="width: 100%; min-height: 450px" id="iframe"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modal_new" class="modal fade bs-modal-lg">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @if (@Request.QueryString["tab"] == "task")
+                {
+                    @Html.Action("ManageItem", "Item", new { model = new ItemModel() { ParentId = Model.Data.ID, Data = new PM_ASVN.Common.Item() { Type = (int)Types.Task }, ReturnUrl = Request.RawUrl } })
+                }
+                @if (@Request.QueryString["tab"] == "bug")
+                {
+                    @Html.Action("ManageItem", "Item", new { model = new ItemModel() { ParentId = Model.Data.ID, Data = new PM_ASVN.Common.Item() { Type = (int)Types.Bug }, ReturnUrl = Request.RawUrl } })
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    
+    $(document).on('click', '.blue', function () {
+        var $action = $(this).data("action");
+        if ($action == "add_more") {
+            $('#iframe').attr('src', $(this).attr("href"));
+            $('#modal_more').modal('show');
+            return false;
+        }
+        if ($action == "add_new") {
+            $('#modal_new').modal('show');
+            return false;
+        }
+    });
+    $(function () {
+        $("#nav-tabs > li").each(function () {
+            var type = location.search.split("tab=")[1];
+            if (type == null) {
+                $("#nav-tabs li:first-child").addClass("active");
+            }
+            else {
+                var type2 = type.split("&")[0];
+                var id = $(this).attr("id");
+                if (id == type2) {
+                    $(this).addClass('active');
+                }
+            }
+        });
+    });
+</script>

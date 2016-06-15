@@ -1,0 +1,41 @@
+﻿@model  Permission
+@using PM_ASVN.Common
+
+@using (Html.BeginForm("AddPermission", "Permission", new { model = Model }, FormMethod.Post, null))
+{
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only"></span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Add Permission</h4>
+        </div>
+        <div class="modal-body">
+            <div class="span8">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        @Html.Label("Permission Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="modal-footer" style="margin-top: 0px">
+            <button type="submit" class="btn blue" style="font-size:11px">Save</button>
+        </div>
+    </div>
+}
+
+
+
+

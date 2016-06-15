@@ -1,0 +1,207 @@
+﻿@model ListItemModel
+@using PM_ASVN.Models;
+@{
+    ViewBag.Title = "List";
+    Layout = null;
+}
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th style="width:15%">
+                ID
+            </th>
+            <th style="width:25%">
+                Name
+            </th>
+            @if (Model.ChildId != 0 && Model.Remove == true)
+            {
+                <th style="width:25%">
+                    Description
+                </th>
+            }
+            <th style="width:20%"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{int index = 0;
+        if (Model.List != null)
+        {
+            foreach (var item in Model.List)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => item.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.Name)
+                    </td>
+                    @if (Model.ChildId != 0 && Model.Remove == true && Model.Description != null)
+                    {
+                        <td>
+                            @Html.DisplayFor(m => Model.Description[index])
+                        </td>
+                    }
+                    <td>
+                        @if (Model.Edit == true)
+                        {
+                            var enumValue = Enum.GetName(typeof(Types), item.Type);
+                            <a class="btn btn-warning" href="@Html.Raw("/" + enumValue + "?Data.ID=" + item.ID)">Edit</a>
+                        }
+
+                    </td>
+                </tr>
+                        { index++; }
+            }
+        }
+
+        }
+        @if (index == 0)
+        {
+            <tr>
+                <td>
+                    No record
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="paging" style="text-align:center;">
+    @Html.HiddenFor(m => m.ChildId, new { id = "ParentID2" })
+    @Html.HiddenFor(m => m.TotalPage)
+    @Html.HiddenFor(m => m.PageSize)
+    @Html.HiddenFor(m => m.TotalRows)
+
+    <ul class="pagination" id="pagination"></ul>
+</div>
+<script>
+
+    $("#pagination").empty();
+    var PageIndex = location.search.split("pageindex=")[1];
+    if (PageIndex == null) {
+        PageIndex = 1;
+    }
+    else {
+        PageIndex = parseInt(PageIndex);
+    }
+
+    var TotalPage = parseInt($("#TotalPage").val());
+    var PageSize = parseInt($("#PageSize").val());
+    var TotalRows = parseInt($("#TotalRows").val());
+    var ChildId = $("#ParentID2").attr("value");
+
+    var pagination = "";
+    var index = 0;
+
+    // create previous button
+    if (PageIndex >= 2) {
+        var pre = "<li><a href='javascript:prevPage()'><<</a></li>";
+        pagination += pre;
+    }
+
+    var href = window.location.href;
+    if (ChildId > 0 && location.search.split("pageindex=")[1] == null) {
+        href += "&pageindex=1";
+    }
+    if (ChildId == 0 && location.search.split("pageindex=")[1] == null) {
+        href += "?pageindex=1";
+    }
+    // show all page
+    if (TotalPage - PageIndex <= PageSize) {
+        var index = 5;
+        if (TotalPage < PageSize) {
+            index = TotalPage;
+        }
+        for (var i = index; i > 0 ; i--) {
+            if ((TotalPage - i + 1) >= 1) {
+                paging = "<li><a href='" + href.replace(/(pageindex=)[^\&]+/, '$1' + (TotalPage - i + 1)) + "'>" + (TotalPage - i + 1) + "</a></li>";
+                pagination += paging;
+            }
+        }
+    }
+    else {
+        for (var k = PageIndex; k < TotalPage ; k++) {
+            if (index == PageSize) {
+                var paging = "<li><a href='javascript:void(0)'>...</a></li>";
+                paging += "<li><a href='" + href.replace(/(pageindex=)[^\&]+/, '$1' + (TotalPage)) + "'>" + (TotalPage) + "</a></li>";
+                break;
+            }
+            else {
+
+                paging = paging = "<li><a href='" + href.replace(/(pageindex=)[^\&]+/, '$1' + k) + "'>" + k + "</a></li>";
+            }
+
+            pagination += paging;
+            index++;
+        }
+
+    }
+
+    if (index == PageSize)
+        pagination += paging;
+
+    // create next button
+    if ((PageIndex == 1 && TotalPage > 1) || (PageIndex < TotalPage && TotalPage > 1)) {
+        var pre = "<li><a href='javascript:nextPage()'>>></a></li>";
+        pagination += pre;
+    }
+    $("#pagination").append(pagination);
+
+    // set class active for pagination
+    $(function () {
+        $("#pagination > li").each(function () {
+
+            var PageIndex = location.search.split("pageindex=")[1];
+            if (PageIndex == null) {
+                $("#pagination li:first-child").addClass("active");
+
+            }
+            else {
+                var href = $(this).find('a').attr('href');
+                var index = href.split("pageindex=")[1];
+                if (index == PageIndex) {
+                    $(this).addClass('active');
+                }
+            }
+
+        });
+    });
+
+    // clack previous
+    function prevPage() {
+        if (PageIndex > 1) {
+            PageIndex--;
+            changePage(PageIndex, 0);
+        }
+    }
+
+    // click next page
+    function nextPage() {
+        if (PageIndex < TotalPage) {
+            PageIndex++;
+            changePage(PageIndex, 1);
+        }
+    }
+
+    // chang page
+    function changePage(page, next) {
+        // Validate page
+        if (page < 1)
+            page = 1;
+        if (page > TotalPage)
+            page = TotalPage();
+
+        if (page == 2 && next == 1) {
+            var PageIndexTemp = location.search.split("pageindex=")[1];
+            if (PageIndexTemp == null)
+                window.location = window.location.href + "?pageindex=" + page;
+            else
+                window.location = window.location.href.replace(/(pageindex=)[^\&]+/, '$1' + page);
+        }
+        else {
+            window.location = window.location.href.replace(/(pageindex=)[^\&]+/, '$1' + page);
+        }
+    }
+</script>
+

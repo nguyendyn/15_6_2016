@@ -1,0 +1,113 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    Layout = null;
+}
+
+
+<div class="col-md-6">
+    <div class="portlet light" style="height: 100%;">
+       
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-folder font-blue"></i>
+                    Document
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="col-md-12" style="padding: 10px;">
+                    <div class="" style="float:right">
+                        @using (Html.BeginForm("UploadFile", "Item", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+                        {
+                            @Html.HiddenFor(m => m.Data.ID)
+                            <div class="col-md-9">
+                                <input style="margin-top: 4px" type="file" name="file" id="file" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="submit" class="btn blue upload" name="file" id="file" value="Upload">
+                            </div>
+                    }
+                    </div>
+                </div>
+                <div class="table-scrollable">
+                    <div class="dataTables_scroll">
+                        <div class="dataTables_scrollHead" style="overflow: hidden; position: relative; border: 0px; width: 100%;">
+                            <div class="dataTables_scrollHeadInner" style="box-sizing: content-box; width: 100%; padding-right: 11px;">
+                                <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" role="grid" style="margin-left: 0px; width: 100%;margin-bottom:0px">
+                                    <thead>
+                                        <tr role="row">
+                                            <th tabindex="0" style="width: 49.5%; padding-right: 0;">File Attach</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="dataTables_scrollBody" style="position: relative; overflow: auto; height: 200px; width: 100%;">
+                            <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" role="grid" aria-describedby="sample_1_info" style="width: 100%; position: absolute; top: 0px; left: 0px">
+                                <thead>
+                                    <tr role="row" style="height: 0px;">
+                                        <th style="width: 52.3%; padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px;" aria-label="Lastname: activate to sort column ascending">
+                                            <div class="dataTables_sizing" style="height:0;overflow:hidden;">Step Actions</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.ListFile != null)
+                                    {
+                                    foreach (var item in Model.ListFile)
+                                    {
+                                        <tr>
+                                            <td data-id="@item.ID">
+                                                <div class="attachments">
+                                                    <div class="contextual">
+                                                    </div>
+                                                    <p>
+                                                        @Html.ActionLink(@item.Name, "DownloadFile", new { IDFile = @item.ID, ID = @Model.Data.ID })
+
+                                                        <span class="size">(35,9 KB)</span>
+                                                        <span class="author">Ẩn danh, @item.CreateDate</span>
+                                                        <a class="btn btn-circle btn-outline btn-danger removefile"><i class="icon-trash"></i></a>
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                }
+
+                                </tbody>
+                            </table><div style="position: relative; top: 0px; left: 0px; width: 1px; height: auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+<script>
+    $(document).on('click', '.removefile', function () {
+        var question = confirm("Do you really want to delete ?");
+        if (question == true) {
+            var row = $(this).closest("tr");
+            var id = row.find('td:eq(0)').data("id");
+            var name = row.find('td:eq(0)').data("name");
+            jQuery.ajax({
+                url: '@Url.Action("DeleteFile", "Item")',
+                data: {
+                    "Data.ID": id,
+                    "ProjectData.ID" : $("#Data_ID").val(),
+                },
+                type: "POST",
+
+                success: function (data) {
+                    if(data == "OK")
+                    {
+                        location.reload();
+                    }
+
+                }
+            });
+        }
+    });
+</script>
+

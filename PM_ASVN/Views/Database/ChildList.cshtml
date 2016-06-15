@@ -1,0 +1,19 @@
+﻿@using PM_ASVN.Models
+@model ListItemModel
+@{
+    ViewBag.Title = "Database";
+}
+<a style="margin-top: 20px" class="btn btn-primary" href="/Database/">+ Add New Database</a>
+
+<div class="col-md-12" style="padding-left: 0px; padding-top: 10px">
+    <label class="control-label" for="typeahead"><b>Connection String: </b> </label>
+    @using (Html.BeginForm("GetDataByConnectionString", "Database", FormMethod.Post))
+    {
+        <div class="form-group">
+            <input required class="form-control" style="display: inline" name="ConnectionString" />
+            <input type="submit" class="btn btn-primary" value="Import" />
+        </div>
+    }
+</div>
+
+@Html.Action("ChildList", "Item", new { model = Model })

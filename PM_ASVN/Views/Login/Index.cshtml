@@ -1,0 +1,56 @@
+﻿@using PM_ASVN.Common
+@model Account
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ModelLayout.cshtml";
+}
+<style>
+    .input-style {
+        max-width: 100%;
+    }
+
+    .modal-content {
+        margin-top: 50px !important;
+    }
+</style>
+
+<div class="container">
+    <div id="loginModal" class="modal show" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="text-center">Login</h1>
+                    </div>
+                    <div class="panel-body">
+                        @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { @class = "form col-md-12 center-block" }))
+                        {
+                            <fieldset>
+                                <div class="form-group">
+                                    @Html.TextBoxFor(model => model.Username, new { @class = "form-control", @placeholder = "Enter Username", @autofocus = "autofocus", @required = "required", @style = "max-width:100%" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.TextBoxFor(model => model.Password, new { @class = "form-control", @placeholder = "Enter Password", @type = "password", @required = "required", @autofocus = "autofocus", @style = "max-width:100%" })
+                                </div>
+                                <div class="form-group">
+                                    <div style="float:left;">
+                                        @Html.CheckBoxFor(m => m.RememberMe)
+                                        @Html.Label("Remember Login")
+                                    </div>
+                                    <div style="float:right;">
+                                        @Html.ActionLink("Forgot Password?", "ForgotPassword", "Account")
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" id="login" class="btn btn-primary btn-lg btn-block">Log In</button>
+                                </div>
+                            </fieldset>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

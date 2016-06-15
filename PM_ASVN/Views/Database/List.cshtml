@@ -1,0 +1,49 @@
+﻿@using PM_ASVN.Models
+@model ListItemModel
+@{
+    ViewBag.Title = "Database";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN SAMPLE TABLE PORTLET-->
+        <div class="portlet light ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-folder font-blue"></i>
+                    <span class="caption-subject font-blue bold uppercase">List Database</span>
+                </div>
+                <div class="actions">
+                    <a href="#connModal" class="btn blue btn-sm" data-toggle="modal" data-target="#connModal"><i class="icon-cloud-upload"></i> Import Database</a>
+                    <a class="btn blue btn-outline btn-sm" href="/Database/">+ Add New Database</a>
+                </div>
+            </div>
+            <div class="portlet-body">
+                @Html.Action("ChildList", "Item", new { model = Model })
+            </div>
+        </div>
+        <!-- END SAMPLE TABLE PORTLET-->
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="connModal" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-close"></i></button>
+            </div>
+               @using (Html.BeginForm ("GetDataByConnectionString", "Database", FormMethod.Post))
+{
+    <div class="modal-body">
+        <div>Enter connection string</div>
+        <textarea required class="form-control" style="display: inline;max-width: 100%" name="ConnectionString" ></textarea>
+    </div>
+        <div class="modal-footer">
+            <input type="submit" class="btn btn-primary" value="Import" />
+        </div>
+}
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

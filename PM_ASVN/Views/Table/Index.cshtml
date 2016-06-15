@@ -1,0 +1,134 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    ViewBag.Title = "Index";
+    bool fullSite = Request["iframe"] == null;
+    if (!fullSite) { Layout = "~/Views/Shared/_ModelLayout.cshtml"; };
+}
+
+@(fullSite ? Html.Action("ManageItem", "Item", new { model = Model }) : null)
+
+
+@if (Model.Data.ID > 0)
+{
+    int PageIndex = 1;
+    if (Request.QueryString["pageindex"] != null)
+    {
+        PageIndex = Convert.ToInt32(Request.QueryString["pageindex"].ToString());
+    }
+    var Type = Enum.GetName (typeof (Types), Model.Data.Type);
+ 
+    <div class="row">
+        <div class="col-md-12">
+            <!-- BEGIN SAMPLE TABLE PORTLET-->
+            <div class="portlet light ">
+                <div class="portlet-body">
+                    <div class="tabbable-custom ">
+                        <ul class="nav nav-tabs" role="tablist" id="nav-tabs">
+                            @if (fullSite == true)
+                            {
+                                <li role="presentation" id="datacolumn">
+                                    <a href="@Type?Data.ID=@Model.Data.ID&tab=datacolumn">List DataColumn</a>
+                                </li>
+                            }
+                            
+                            <li role="presentation" id="feature">
+                                @if (fullSite == true)
+                                {
+                                    <a href="@Type?Data.ID=@Model.Data.ID&tab=feature">List Feature (Parent of Table)</a>
+                                }
+                                else
+                                {
+                                    <a>List Feature (Parent of Table)</a>
+                                }
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            @if (fullSite == true)
+                            {
+                                if (@Request.QueryString["tab"] == "datacolumn" | @Request.QueryString["tab"] == null)
+                                {
+                                    <div class="tab-pane active">
+                                    <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="dataTables_length" id="sample_1_length">
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <div id="sample_1_filter" class="dataTables_filter">
+                                                    <a data-action="add_new" class="btn blue" style="float:right">+ New DataColumn</a>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @Html.Action("ChildList", "Item", new { model = new ListItemModel() { ParentId = Model.Data.ID, Type = Types.DataColumn, Edit = true, PageIndex = PageIndex } })
+                                    </div>
+                                </div>
+                                }
+                            }
+                            @if (@Request.QueryString["tab"] == "feature")
+                            {
+                                <div id="table">
+                                    <div class="row-fluid sortable">
+                                        @Html.Action("ParentList", "Item", new { model = new ListItemModel() { ChildId = Model.Data.ID, Type = Types.Feature, PageIndex = PageIndex } })
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END SAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+  
+}
+<div id="modal_new" class="modal fade bs-modal-lg">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @if (@Request.QueryString["tab"] == "datacolumn" | @Request.QueryString["tab"] == null)
+                {
+                    @Html.Action("ManageItem", "Item", new { model = new ItemModel() { ParentId = Model.Data.ID, Data = new PM_ASVN.Common.Item() { Type = (int)Types.DataColumn }, ReturnUrl = Request.RawUrl } })
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on('click', '.blue', function () {
+        var $action = $(this).data("action");
+        
+        if ($action == "add_new") {
+            $('#modal_new').modal('show');
+            return false;
+        }
+    });
+
+    $(function () {
+        $("#nav-tabs > li").each(function () {
+            var type = location.search.split("tab=")[1];
+            if (type == null) {
+                $("#nav-tabs li:first-child").addClass("active");
+            }
+            else {
+                var type2 = type.split("&")[0];
+                var id = $(this).attr("id");
+                if (id == type2) {
+                    $(this).addClass('active');
+                }
+            }
+        });
+    });
+
+</script>

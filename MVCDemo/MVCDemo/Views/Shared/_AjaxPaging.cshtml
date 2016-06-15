@@ -1,0 +1,24 @@
+﻿<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $(document).on("click", "#contentPage a", function () {
+            $.ajax({
+                url: $(this).attr("href"),
+                type: 'GET',
+                cache: false,
+                success: function (result) {
+                    $("#content").html(result);
+                }
+            });
+            return false;
+        });
+    }); 
+    $(function () {
+        $('#all').on("click", function () {
+            $('.list').prop("checked", $(this).prop("checked"));
+
+        });
+    });
+    
+
+</script>

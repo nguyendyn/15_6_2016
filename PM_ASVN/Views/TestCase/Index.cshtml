@@ -1,0 +1,385 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .table-bordered > tbody > tr > td {
+        line-height: 1.9;
+    }
+
+    .table-hover > tbody > tr:hover {
+        cursor: pointer;
+    }
+</style>
+
+
+@Html.Action("ManageItem", "Item", new { model = Model })
+@if (Model.Data.ID > 0)
+{
+    int PageIndex = 1;
+    if (Request.QueryString["pageindex"] != null)
+    {
+        PageIndex = Convert.ToInt32(Request.QueryString["pageindex"].ToString());
+    }
+    var Type = Enum.GetName(typeof(Types), Model.Data.Type);
+    <div class="row">
+        <div class="col-md-12">
+            <!-- BEGIN SAMPLE TABLE PORTLET-->
+            <div class="portlet light">
+                <div class="portlet-title" style="border-bottom: 1px solid #eee; min-height: 25px;">
+                    <div class="caption" style="padding: 0px;">
+                        <i class="icon-list font-blue" style="color:blue"></i>
+                        <span class="caption-subject font-blue bold uppercase">Test Step</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="table-scrollable">
+                        <div class="dataTables_scroll">
+                            <div class="dataTables_scrollHead" style="overflow: hidden; position: relative; border: 0px; width: 100%;">
+                                <div class="dataTables_scrollHeadInner" style="box-sizing: content-box; width: 100%; padding-right: 11px;">
+                                    <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" role="grid" style="margin-left: 0px; width: 100%;margin-bottom:0px">
+                                        <thead>
+                                            <tr role="row">
+                                                <th tabindex="0" style="width: 3%; padding-right: 0;">#</th>
+                                                <th tabindex="0" style="width: 47%; padding-right: 0;">Step Actions</th>
+                                                <th tabindex="0" style="width: 42%; padding-right: 0;">Test Data</th>
+                                                <th tabindex="0" style="width: 4%; padding-right: 0;"></th>
+                                                <th tabindex="0" style="width: 4%; padding-right: 0;"></th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="dataTables_scrollBody" style="position: relative; overflow: auto; height: 120px; width: 100%;">
+                                <table id="tableStepTestCase" class="table table-striped table-bordered table-hover order-column dataTable no-footer" role="grid" aria-describedby="sample_1_info" style="width: 100%; position: absolute; top: 0px; left: 0px">
+                                    <thead>
+                                        <tr role="row" style="height: 0px;">
+                                            <th style="width: 3.15%; padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px;" aria-sort="ascending" aria-label="First&amp;nbsp;name: activate to sort column descending">
+                                                <div class="dataTables_sizing" style="height:0;overflow:hidden;">#</div>
+                                            </th>
+                                            <th style="width: 51.25%; padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px;" aria-label="Lastname: activate to sort column ascending">
+                                                <div class="dataTables_sizing" style="height:0;overflow:hidden;">Step Actions</div>
+                                            </th>
+                                            <th style="width: 45.6%; padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px;" aria-label="Position: activate to sort column ascending">
+                                                <div class="dataTables_sizing" style="height:0;overflow:hidden;">Test Data</div>
+                                            </th>
+                                            <th style="width: 5%; border: 0px">
+
+                                            </th>
+                                            <th style="width: 5%; border: 0px">
+
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{int index = 1;}
+                                        @if (Model.StepData != null)
+                                        {
+                                            foreach (var item in Model.StepData)
+                                            {
+                                                <tr role="row" class="odd" data-id="@item.ID">
+                                                    <td> @index</td>
+                                                    <td id="name"> @item.Name</td>
+                                                    <td id="test"><p>@item.TestData</p></td>
+
+                                                    <td id="result">
+                                                        @if (item.ExpectedResult != "")
+                                                        {
+                                                            <a title="@item.ExpectedResult" data-placement="left" data-toggle="tooltip" class="btn btn-circle blue showresult"><i class="icon-screen-desktop"></i></a>
+                                                            <span hidden>@item.ExpectedResult</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn-circle btn-outline btn-danger removestep"><i class="icon-trash"></i></a>
+                                                    </td>
+                                                </tr>
+                                                        index++;
+                                            }
+                                        }
+                                    </tbody>
+                                </table><div style="position: relative; top: 0px; left: 0px; width: 1px; height: auto;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="table-scrollable input-step" style="border:none;">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    @{index = index - 1;}
+                                    <td width="3%">
+                                        <input id="indexStep" value="@index" hidden />
+
+                                    </td>
+                                    <td width="44%">
+                                        <textarea placeholder="Step Actions..." id="step" class="form-control"></textarea>
+                                        <input id="selectexpect" type="checkbox" class="toggle"> Add Expected Result
+                                        <p id="resultselect"></p>
+                                    </td>
+                                    <td width="45%"><textarea style="margin-bottom:31px" placeholder="Test Data..." id="testData" class="form-control"></textarea></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td style="text-align:right"><a class="btn blue step">Add Step</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+
+}
+<div id="modal_more" class="modal fade bs-modal-lg">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"></span>
+                </button>
+                <h4 class="modal-title">Add More</h4>
+            </div>
+            <div class="modal-body">
+                <iframe frameborder="0" style="width: 100%; min-height: 450px" id="iframe"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_edit" class="modal fade bs-modal-lg">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style=" border-bottom: 1px solid #e5e5e5;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"></span>
+                </button>
+                <h4 class="modal-title">Edit Step</h4>
+            </div>
+            <div class="modal-body row">
+                <div class="col-md-6">
+                    <input type="text" id="modal_step" hidden />
+                    <label class="control-label"><b>Step Actions</b></label>
+                    <textarea style="min-height: 50px" class="form-control" id="modal_name"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="control-label"><b>Test Data</b></label>
+                    <textarea style="min-height: 50px" class="form-control" id="modal_data"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="control-label" id="lbl_result"><b>ExpectedResult</b></label>
+                    <textarea style="min-height: 50px" class="form-control" id="modal_result"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn blue savechanges">Save Changes</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).on('click', '.blue', function () {
+        if ($(this).attr("href") != null) {
+            $('#iframe').attr('src', $(this).attr("href"));
+            $('#modal_more').modal('show');
+            return false;
+        }
+    });
+
+    $(document).on('click', '.saveexpectedresult', function () {
+        $.ajax({
+            url: '@Url.Action("ManageStepInTestCase", "Item")',
+            data: {
+                "ID": ("#Data_ID").val(),
+                "Action": IDTestCase,
+                "TCExpectedResult": $("#TCExpectedResult").val(),
+                "Update": "SaveExpectedResult",
+            },
+            type: "POST",
+            success: function (data) {
+                if (data == "OK") {
+                    location.reload();
+                }
+
+            },
+        });
+    });
+
+    $(document).on('click', '.savechanges', function () {
+        var IDTestCase = $("#Data_ID").val();
+        var idStep = $("#modal_step").val();
+        var step = $("#modal_name").val();
+        var testData = $("#modal_data").val();
+        var expectedResult = $("#modal_result").val();
+        if (expectedResult == null) {
+            expectedResult = "";
+        }
+        $.ajax({
+            url: '@Url.Action("ManageStepInTestCase", "Item")',
+            data: {
+                "ID": idStep,
+                "IDTestCase": IDTestCase,
+                "Name": step,
+                "TestData": testData,
+                "ExpectedResult": expectedResult,
+                "Action": "Save"
+            },
+            type: "POST",
+            success: function (data) {
+                if (data == "OK") {
+                    location.reload();
+                }
+
+            },
+        });
+    });
+
+    $(document).on('click', '.removestep', function () {
+        var IDTestCase = $("#Data_ID").val();
+        var row = $(this).closest("tr");
+        var idStep = row.data("id");
+        var question = confirm("Do you really want to delete ?");
+        if (question == true) {
+            $.ajax({
+                url: '@Url.Action("ManageStepInTestCase", "Item")',
+                data: {
+                    "ID": idStep,
+                    "IDTestCase": IDTestCase,
+                    "Action": "Remove"
+                },
+                type: "POST",
+                success: function (data) {
+                    if (data == "OK") {
+                        location.reload();
+                    }
+
+                },
+            });
+        }
+
+    });
+    
+
+    $(document).on('click', '.step', function () {
+        var IDTestCase = $("#Data_ID").val();
+        var step = $("#step").val();
+        var testData = $("#testData").val();
+        var expectedResult = $("#expectedResult").val();
+        if (expectedResult == null)
+            expectedResult == "";
+        $.ajax({
+            url: '@Url.Action("ManageStepInTestCase", "Item")',
+            data: {
+                "ID": "0",
+                "IDTestCase": IDTestCase,
+                "Name": step,
+                "TestData": testData,
+                "ExpectedResult": expectedResult,
+                "Action": "Save"
+            },
+            type: "POST",
+            success: function (data) {
+                if (data != "") {
+                    var indexStep = (parseInt($("#indexStep").val()) + 1);
+                    var contentStep = "<tbody>";
+                    contentStep += $("#tableStepTestCase tbody").html();
+
+                    contentStep += "<tr role='row' class='odd' data-id='" + data + "'>\
+                                                    <td> " + indexStep + "</td>\
+                                                    <td id='name'> "+ step + "</td>\
+                                                    <td id='test'><p>" + testData + "</p></td>";
+                    if (expectedResult == null) {
+                        contentStep += "<td></td>"
+                    }
+                    else {
+                        contentStep += "<td id='result'><a title='" + expectedResult + "' data-placement='left' data-toggle='tooltip' class='btn btn-circle blue showresult'><i class='icon-screen-desktop'></i></a>";
+                        contentStep += "<span hidden>" + expectedResult + "</span></td>";
+                    }
+                    contentStep += "<td><a class='btn btn-circle btn-outline btn-danger removestep'><i class='icon-trash'></i></a></td>\
+                                                </tr></tbody>";
+                    $("#tableStepTestCase tbody").detach();
+                    $("#tableStepTestCase").append(contentStep);
+                    $("#indexStep").val(parseInt($("#indexStep").val()) + 1);
+                    $("#step").val('');
+                    $("#testData").val('');
+                    $('#selectexpect').prop('checked', false);
+                    $("#resultselect").empty();
+                    $("#resultselect").hide();
+                    $("#testData").css("margin-bottom", "21px");
+
+                    $('[data-toggle="tooltip"]').tooltip()
+
+                    var howMuchToScroll = $('div.dataTables_scrollBody table tbody tr:last').offset().top - $('div.dataTables_scrollBody table').offset().top;
+                    $('div.dataTables_scrollBody').scrollTop(howMuchToScroll);
+
+                }
+
+            },
+        });
+    });
+
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+    $(document).on('click', '#tableStepTestCase tbody tr td:not(:last-child, :nth-child(4))', function () {
+
+        var row = $(this).closest("tr");
+        var idStep = row.data("id");
+        var name = row.find("td#name").text().trim();
+        var test = row.find("td#test").text().trim();
+        var result = row.find("td#result").text().trim();
+        $("#modal_step").val(idStep);
+        $("#modal_name").val(name);
+        $("#modal_data").val(test);
+        if (result != "") {
+            $("#modal_result").val(result);
+            $("#lbl_result").show();
+            $("#modal_result").show();
+        }
+        else {
+            $("#lbl_result").hide();
+            $("#modal_result").hide();
+        }
+        $('#modal_edit').modal('show');
+    });
+
+    $('#selectexpect').change(function () {
+        if ($(this).is(':checked')) {
+            var result = "<textarea placeholder='Expected Result...' id='expectedResult' class='form-control' ></textarea>";
+            $("#testData").css("margin-bottom", "78px");
+            $("#resultselect").append(result);
+
+        } else {
+            $("#resultselect").empty();
+            $("#testData").css("margin-bottom", "31px");
+        }
+    });
+    $(function () {
+        $("#nav-tabs > li").each(function () {
+            var type = location.search.split("tab=")[1];
+            if (type == null) {
+                $("#nav-tabs li:first-child").addClass("active");
+            }
+            else {
+                var type2 = type.split("&")[0];
+                var id = $(this).attr("id");
+                if (id == type2) {
+                    $(this).addClass('active');
+                }
+            }
+        });
+    });
+</script>
+<script src="~/Scripts/bootstrap-multiselect.js"></script>

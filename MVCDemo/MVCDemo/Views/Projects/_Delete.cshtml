@@ -1,0 +1,49 @@
+﻿@model MVCDemo.Models.Project
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-content">
+        <div class="modal-header" id="delete">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Delete Project</h4>
+        </div>
+        <div class="form-horizontal">
+            <div class="modal-body">
+                <div class="form-group">
+                    @Html.Label("Project Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("Project Description", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.ProjectDescription, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("Date Start", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.DateStart, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-9 col-sm-offset-3">
+                        <h3>
+                            <span class="label label-danger">
+                                Are you sure to delete this Project?
+                            </span>
+                        </h3>
+                    </div>
+                </div>
+            </div><!--div modal body-->
+            <div class="modal-footer">
+                <div class="form-actions no-color">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                    <input type="submit" value="Yes" class="btn btn-danger" />
+
+                </div>
+            </div>
+        </div>
+    </div>
+}

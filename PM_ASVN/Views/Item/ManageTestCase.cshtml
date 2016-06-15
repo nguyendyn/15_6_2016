@@ -1,0 +1,116 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    ViewBag.Title = "ManageTestCase";
+    Layout = null;
+}
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-ui.js"></script>
+
+
+
+<script>
+    $(function () {
+        
+        $("#testDate").datepicker({
+            changeYear: true,
+            changeMonth: true
+        });
+    });
+</script>
+
+@Html.HiddenFor(m => m.TestCaseData.ID)
+<div class="row form-style-4">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-md-1 control-label">Summary</label>
+            <div class="col-md-11">
+                @Html.TextAreaFor(m => m.TestCaseData.Summary, new { @class = "form-control area", @required = "required" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-3 control-label">Priority</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(m => m.Priority, new SelectList((System.Collections.IEnumerable)ViewData["lstPriority"], "ID", "Name"), new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    
+    <!--/span-->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-3 control-label">Status</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(m => m.Status, new SelectList((System.Collections.IEnumerable)ViewData["lstStatus"], "ID", "Name"), new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <!--/span-->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-3 control-label">Assignee</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(m => m.TestCaseData.Assigner, new SelectList ((System.Collections.IEnumerable)ViewData["lstUser"], "ID", "Name"), new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <!--/span-->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-3 control-label">Type</label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(m => m.TestType, new SelectList ((System.Collections.IEnumerable)ViewData["lstTypeTest"], "ID", "Name"), new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    
+    <!--/span-->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-3 control-label">Screen</label>
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.TestCaseData.Screen, new { @class = "form-control", @required = "required" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-3 control-label">TestDate</label>
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.TestCaseData.TestDate, "{0:MM/dd/yyyy}", new { @class = "form-control", @placeholder = "MM/dd/yyyy", @id = "testDate" })
+            </div>
+
+        </div>
+    </div>
+    <!--/span-->
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-md-1 control-label">Pre- Condition</label>
+            <div class="col-md-11">
+                @Html.TextAreaFor(m => m.TestCaseData.PreCondition, new { @class = "form-control area", @required = "required" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-md-1 control-label">Expected Result</label>
+            <div class="col-md-11">
+                @Html.TextAreaFor(m => m.TestCaseData.TCExpectedResult, new { @class = "form-control area", @required = "required" })
+            </div>
+        </div>
+    </div>
+    <!--/span-->
+</div>
+
+
+
+
+
+
+
+
+
+

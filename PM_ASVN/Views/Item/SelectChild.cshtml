@@ -1,0 +1,152 @@
+﻿@model ListItemModel
+@using PM_ASVN.Models;
+@{
+    ViewBag.Title = "List";
+    int index = 0;
+    bool fullSite = Request["iframe"] == null;
+    if (!fullSite) { Layout = "~/Views/Shared/_ModelLayout.cshtml"; };
+    
+}
+
+    <style>
+        .input-style{
+            max-width: 80%;
+        }
+    </style>
+
+
+@if (Model.ParentId != 0 && Model.FilterParentId != 0)
+{
+    int check = 0;
+    if (Model.List != null)
+    {
+        foreach (var item in Model.List)
+        {
+            if (item.Type == (int)Types.Database)
+            {
+                check++;
+            }
+        }
+    }
+    if(check > 0)
+    {
+        <div class="form-group">
+            <label class="control-label" for="typeahead"><b>Select Database: </b> </label>
+            <select class="form-control" id="type_item" onchange="changeValue()">
+                @if (Model.List != null)
+                {
+                    foreach (var item in Model.List)
+                    {
+                        if (item.Type == (int)Types.Database)
+                        {
+                            <option value="@Html.Raw(item.ID)">@Html.Raw(item.Name)</option>
+                        }
+                    }        
+                }
+            </select>
+        </div>
+    }
+}
+
+    <script>
+        $(function () {
+            $("#type_item > option").each(function () {
+                var queryString = (window.location.href).substr((window.location.href).indexOf('?') + 1);
+                var type = (queryString.split('&'))[0];
+                var parentid = (queryString.split('&'))[1];
+                var value = (queryString.split('&'))[2];
+                var filterid = (value.split('='))[1];
+                if (this.value == filterid) {
+                    this.selected = 'selected';
+                }
+            });
+        });
+    </script>
+
+        @using (Html.BeginForm((string)null, (string)null, FormMethod.Post, new { id = "form"}))
+        {
+            if (fullSite == false)
+            {
+                <input type="hidden" id="iframe" name="iframe" value="true">
+            }
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @Html.Hidden("ParentID")
+                    @if (Model.List != null)
+                    {
+                        foreach (var item in Model.List)
+                        {
+                            if (Model.FilterParentId != 0)
+                            {
+                                if (item.Type != (int)Types.Database)
+                                {
+                                    @Html.Hidden("ReturnUrl");
+                                    <tr>
+                                        <td><input type="checkbox" name="Items[@index].IDChild" value="@Html.Raw(item.ID)" /></td>
+                                        <td>@item.Name</td>
+                                        <td>@Html.TextBox("Items[" + index + "].Description", null, new { @class = "form-control input-style" })</td>
+                                    </tr> 
+                                    { index++; } 
+                                }
+                            }
+                            else
+                            {
+                                @Html.Hidden("ReturnUrl");
+                                <tr>
+                                    <td><input type="checkbox" name="Items[@index].IDChild" value="@Html.Raw(item.ID)" /></td>
+                                    <td>@item.Name</td>
+                                    <td>@Html.TextBox("Items[" + index + "].Description", null, new { @class = "form-control input-style" })</td>
+                                </tr>
+                                { index++; } 
+                            }
+                           
+                            
+                        }
+                    }
+                    
+                    @if (index == 0)
+                    {
+                        <tr>
+                            <td>No record</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+               if (index > 0)
+                {
+                    <div class="form-group" style="float: right">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                }
+        }
+
+<script>
+    function changeValue() {
+        var id = $("#type_item option:selected").val();
+        var iframe = $("#iframe").val();
+        
+        if ((window.location.href).indexOf('?') != -1) {
+            var queryString = (window.location.href).substr((window.location.href).indexOf('?') + 1);
+            var type = (queryString.split('&'))[0];
+            var parentid = (queryString.split('&'))[1];
+            var value = (queryString.split('&'))[2];
+            var filterid = (value.split('='))[0] + "="+ id;
+            var url =  "?" + type + "&" + parentid + "&" + filterid;
+        }
+        if (iframe == null) {
+            window.location = url;
+        }
+        else
+        {
+            window.location = url + "&iframe=true";
+        }
+    }
+</script>
+

@@ -1,0 +1,25 @@
+﻿@using PM_ASVN.Models
+@model ListItemModel
+@{
+    ViewBag.Title = "Index";
+}
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN SAMPLE TABLE PORTLET-->
+        <div class="portlet light ">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-folder font-blue"></i>
+                    <span class="caption-subject font-blue bold uppercase">List Project</span>
+                </div>
+                <div class="actions">
+                    <a class="btn blue" href="/Project/Index">+ New Project</a>
+                </div>
+            </div>
+            <div class="portlet-body">
+                    @Html.Action("ChildList", "Item", new { model = Model })
+            </div>
+        </div>
+        <!-- END SAMPLE TABLE PORTLET-->
+    </div>
+</div>

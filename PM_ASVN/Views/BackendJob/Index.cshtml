@@ -1,0 +1,165 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    ViewBag.Title = "Index Feature";
+}
+
+<style>
+    .modal-header {
+        border-bottom: none;
+    }
+</style>
+
+
+@Html.Action("ManageItem", "Item", new { model = Model })
+
+@if (Model.Data.ID > 0)
+{
+    int PageIndex = 1;
+    var Type = Enum.GetName(typeof(Types), Model.Data.Type);
+    <div class="row">
+        <div class="col-md-12">
+            <!-- BEGIN SAMPLE TABLE PORTLET-->
+            <div class="portlet light ">
+                <div class="portlet-body">
+                    <div class="tabbable-custom ">
+                        <ul class="nav nav-tabs" id="nav-tabs">
+                            <li id="store">
+                                <a href="@Type?Data.ID=@Model.Data.ID&tab=store"> List Store </a>
+                            </li>
+                            <li id="table">
+                                <a href="@Type?Data.ID=@Model.Data.ID&tab=table"> List Table </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            @if (@Request.QueryString["tab"] == "store" | @Request.QueryString["tab"] == null)
+                            {
+                                <div class="tab-pane active">
+                                    <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="dataTables_length" id="sample_1_length">
+                                                   
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <div id="sample_1_filter" class="dataTables_filter">
+                                                    <a class="btn blue" data-action="add_more" href="Store/SelectChild?type=@Html.Raw((int)Types.Store)&parentId=@Html.Raw(Model.Data.ID)&FilterParentId=@Session["IDDatabase"]&iframe=true" style="float:right">+ Add More Store</a>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @Html.Action("ChildList", "Item", new
+                                   {
+                                       model = new ListItemModel()
+                                       {
+                                           ParentId = Model.Data.ID,
+                                           Type = Types.Store,
+                                           PageIndex = PageIndex,
+                                           Template = @<text><a class="btn-link" href="/Store?iframe=true&Data.ID=@item.ID&tab=feature">Link</a></text>
+                                       }
+                                   })
+                                    </div>
+                                </div>
+                            }
+                            @if (@Request.QueryString["tab"] == "table")
+                            {
+                                <div class="tab-pane active">
+                                    <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="dataTables_length" id="sample_1_length">
+                                                   
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <div id="sample_1_filter" class="dataTables_filter">
+                                                    <a class="btn blue" data-action="add_more" href="Table/SelectChild?type=@Html.Raw((int)Types.Table)&parentId=@Html.Raw(Model.Data.ID)&FilterParentId=@Session["IDDatabase"]&iframe=true" style="float:right">+ Add More Table</a>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @Html.Action("ChildList", "Item", new
+                                                                           {
+                                                                               model = new ListItemModel()
+                                                                               {
+                                                                                   ParentId = Model.Data.ID,
+                                                                                   Type = Types.Table,
+                                                                                   PageIndex = PageIndex,
+                                                                                   Template = @<text><a class="btn-link" href="/Table?iframe=true&Data.ID=@item.ID&tab=feature">Link</a></text>
+                                                                               }
+                                                                           })
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END SAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+}
+<div id="modalLink" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe frameborder="0" style="width: 100%; min-height: 450px" id="iframelink"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_more" class="modal fade bs-modal-lg">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"></span>
+                </button>
+                <h4 class="modal-title">Add More</h4>
+            </div>
+            <div class="modal-body">
+                <iframe frameborder="0" style="width: 100%; min-height: 450px" id="iframe"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).on('click', '.btn-link', function () {
+
+        $('#iframelink').attr('src', $(this).attr("href"));
+        $('#modalLink').modal('show');
+        return false;
+    });
+    $(document).on('click', '.blue', function () {
+        if ($(this).attr("href") != null) {
+            $('#iframe').attr('src', $(this).attr("href"));
+            $('#modal_more').modal('show');
+            return false;
+        }
+    });
+
+    $(function () {
+        $("#nav-tabs > li").each(function () {
+            var type = location.search.split("tab=")[1];
+            if (type == null) {
+                $("#nav-tabs li:first-child").addClass("active");
+            }
+            else {
+                var type2 = type.split("&")[0];
+                var id = $(this).attr("id");
+                if (id == type2) {
+                    $(this).addClass('active');
+                }
+            }
+        });
+    });
+</script>

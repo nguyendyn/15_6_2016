@@ -1,0 +1,120 @@
+﻿@using PM_ASVN.Models
+@model ItemModel
+@{
+    Layout = null;
+}
+
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-ui.js"></script>
+
+
+<script>
+    $(function () {
+        $("#datepickerStartDate").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            onClose: function (selectedDate) {
+                $("#datepickerEndDate").datepicker("option", "minDate", selectedDate);
+            }
+        });
+
+        $("#datepickerDueDate").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            onClose: function (selectedDate) {
+                $("#datepickerDueDate").datepicker("option", "minDate", selectedDate);
+            }
+        });
+      });
+</script>
+
+<style>
+    .row.form-style-4 .control-label {
+    }
+
+    .row.form-style-4 .div-select {
+        padding-left: 0px;
+    }
+</style>
+
+@Html.HiddenFor(m => m.TaskData.ID)
+<div class="row form-style-4">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Status</label>
+            <div class="col-md-8 div-select">
+                @Html.DropDownListFor(m => m.Status, new SelectList((System.Collections.IEnumerable)ViewData["lstStatus"], "ID", "Name"), new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Start Date</label>
+            <div class="col-md-8 div-select">
+                @Html.TextBoxFor(m => m.TaskData.StartDate, "{0:MM/dd/yyyy}", new { @class = "form-control", @placeholder = "MM/dd/yyyy", @required = "required", @id = "datepickerStartDate" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Due Date</label>
+            <div class="col-md-8 div-select">
+                @Html.TextBoxFor(m => m.TaskData.DueDate, "{0:MM/dd/yyyy}", new { @class = "form-control", @placeholder = "MM/dd/yyyy", @id = "datepickerDueDate" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Priority</label>
+            <div class="col-md-8 div-select">
+                @Html.DropDownListFor(m => m.Priority, new SelectList((System.Collections.IEnumerable)ViewData["lstPriority"], "ID", "Name"), new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Assignee</label>
+            <div class="col-md-8 div-select">
+                @Html.DropDownListFor(m => m.TaskData.Assignee, new SelectList((System.Collections.IEnumerable)ViewData["lstUser"], "ID", "Name"), new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">% Done</label>
+            <div class="col-md-8 div-select">
+                @Html.DropDownListFor(m => m.TaskData.Done, new[] {
+                                                                new SelectListItem() {Text = "0%", Value = "0"},
+                                                                new SelectListItem() {Text = "10%", Value = "10"},
+                                                                new SelectListItem() {Text = "20%", Value = "20"},
+                                                                new SelectListItem() {Text = "30%", Value = "30"},
+                                                                new SelectListItem() {Text = "40%", Value = "40"},
+                                                                new SelectListItem() {Text = "50%", Value = "50"},
+                                                                new SelectListItem() {Text = "60%", Value = "60"},
+                                                                new SelectListItem() {Text = "70%", Value = "70"},
+                                                                new SelectListItem() {Text = "80%", Value = "80"},
+                                                                new SelectListItem() {Text = "90%", Value = "90"},
+                                                                new SelectListItem() {Text = "100%", Value = "100"},
+                                                                }, new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <!--/span-->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Estimated time</label>
+            <div class="col-md-8 div-select">
+                @Html.TextBoxFor(m => m.TaskData.EstimatedTime, new { @class = "form-control", @required = "required"})
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+

@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta charset="utf-8" />
+    <title>Aperia Solutions</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap-multiselect.js"></script>
+    <link href="~/fonts/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/layout.min.css" rel="stylesheet" />
+    <link href="~/Content/toastr.css" rel="stylesheet" />
+    <script src="~/Scripts/toastr.js"></script>
+    <link href="~/Content/aperia_solution.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <style>
+        body {
+            background: #fff;
+        }
+
+        .body-parent {
+            min-height: 520px;
+        }
+    </style>
+
+</head>
+<!-- END HEAD -->
+<body class="page-container-bg-solid">
+    <section class="body-parent">
+        <div class="page-container">
+            <div class="page-content-wrapper">
+                <div class="page-content" style="background: #fff;">
+                    <div class="container">
+                        <div class="page-content-inner">
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END CONTAINER -->
+    <div class="scroll-to-top">
+        <i class="icon-arrow-up"></i>
+    </div>
+	 @if (TempData["Message"] != null)
+    {
+        <script>
+            toastr["@TempData["Type"]"]("@TempData["Message"]")
+        </script>
+    }
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/main.js"></script>
+</body>
+</html>

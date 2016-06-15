@@ -1,0 +1,39 @@
+﻿<ul class="pagination">
+    @{
+        double _pageCount = (double)(decimal)((ViewBag.Total) / (decimal)ViewBag.PageSize);
+        int pageCount = (int)Math.Ceiling(_pageCount);
+
+        string classNameForNext = ViewBag.Page == pageCount ? "disabled" : string.Empty;
+        string classNameForPrevious = ViewBag.Page == 1 ? "disabled" : string.Empty;
+    }
+    <li class="@classNameForPrevious">
+        @if (classNameForPrevious == string.Empty)
+        {
+            @Html.ActionLink("Prev", "Index", new { page = (ViewBag.Page - 1) })
+        }
+        else
+        {
+            <a href="#">Prev</a>
+        }
+    </li>
+    @for (int i = 1; i <=pageCount; i++)
+    {
+      
+        string active = "";
+        if (i == ViewBag.Page)
+        {
+            active = "active";
+        }
+        <li class="@active">@Html.ActionLink(i.ToString(), "Index", new { page = i })</li>
+    }
+    <li class="@classNameForNext">
+        @if (classNameForNext == string.Empty)
+        {
+            @Html.ActionLink("Next", "Index", new { page = (ViewBag.Page + 1) })
+        }
+        else
+        {
+            <a href="#">Next</a>
+        }
+    </li>
+</ul>

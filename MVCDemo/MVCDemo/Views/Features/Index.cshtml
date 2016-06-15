@@ -1,0 +1,68 @@
+﻿@model IEnumerable<MVCDemo.Models.Feature>
+
+@{
+    ViewBag.Title = "Features List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@Html.Partial("_Modal")
+<div id="content">
+    <div class="text-center">
+        <h2>Feature List </h2>
+    </div>
+    <div id="create">
+        <a href='@Url.Action("Create")' class=" btn btn-info btn-modal"><i class="glyphicon glyphicon-plus"></i></a>
+    </div>
+    <table class="table table-bordered table-hover text-center ">
+        <tr>
+            <th>
+                <div class="text-center">
+                    ID
+                </div>
+            </th>
+            <th>
+                <div class="text-center">
+                    Feature Name
+                </div>
+            </th>
+            <th>
+                <div class="text-center">
+                    Feature Description
+                </div>
+            </th>
+           
+            <th>
+                <div class="text-center">
+                   Action
+                </div>
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td class="text-left">
+                    @Html.DisplayFor(modelItem => item.FeatureName)
+                </td>
+                <td class="text-left">
+                    @Html.DisplayFor(modelItem => item.FeatureDescription)
+                </td>
+                @*<td>
+                    @Html.ActionLink("WebPage", "Details", new { id = item.ID, name = item.FeatureName })
+                </td>*@
+                <td>
+                    <a href='@Url.Action("Edit", new { id=item.ID})' class="btn btn-primary btn-modal"><i class="glyphicon glyphicon-pencil"></i></a>
+                    <a href='@Url.Action("Delete", new { id = item.ID })' class=" btn btn-danger btn-modal"><i class="glyphicon glyphicon-trash"></i></a>
+                </td>
+            </tr>
+        }
+
+    </table>
+    <div id="contentPage">
+       @Html.Partial("_PagingIndex")
+    </div>
+    @Html.Partial("_Footer")
+</div>
